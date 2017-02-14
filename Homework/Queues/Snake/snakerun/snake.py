@@ -86,4 +86,5 @@ class MySnake(Snake):
                 display.mainCanvas.itemconfig(self.head.shape_id, fill=self.head.color)
                 new_head_shape_id = self.head.shape_id  
                                   
-            self.tail_queue.append(new_head_shape_id)                                  
+            self.tail_queue.append(new_head_shape_id)
+            return True                                  

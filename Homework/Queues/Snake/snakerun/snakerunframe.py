@@ -3,10 +3,9 @@ Created on 2017. 2. 12.
 
 @author: jslee
 '''
-
 from tkinter import * 
 from enum import Enum
-from snake import *
+from snakerun.world import *
 
 class Display(Frame):  
     class State(Enum):
@@ -24,10 +23,10 @@ class Display(Frame):
         if world != None and snake != None:
             self.snake = snake
             self.world = world
-            self.map_grain_size = world.grain_size
-            self.map_width = world.width
-            self.map_height = world.height
-            self.map_bg = world.bg
+            self.map_grain_size = world.map.grain_size
+            self.map_width = world.map.width
+            self.map_height = world.map.height
+            self.map_bg = world.map.bg
             self.sleep_time = sleep_time
             
             root = Tk()
@@ -40,6 +39,17 @@ class Display(Frame):
             self.world.createFeed(self)
             self.snake.moveAndShow(self, Display.Tile('space'))            
             self.job_id = None
+            row_cnt = 0
+            for row in world.map.tiles:
+                for i in range(0, len(row)):
+                    if row[i] == world.Map.WALL:
+                        self.mainCanvas.create_rectangle(i*world.map.grain_size,
+                                                         row_cnt*world.map.grain_size, 
+                                                         (i+1)*world.map.grain_size, 
+                                                         (row_cnt+1)*world.map.grain_size, fill = world.map.wall_color)
+                row_cnt = row_cnt +1
+                               
+                
             self.focus_set()
             
         else:
@@ -53,7 +63,6 @@ class Display(Frame):
         self.curstate=Display.State.PLAYING
         self.playButton.config(state=DISABLED) 
         self.stopButton.config(state=NORMAL)
-        self.showText('Playing...')
         self.tick()
     
     def stop(self):
@@ -67,7 +76,6 @@ class Display(Frame):
         self.playButton.config(state=NORMAL)
         self.playButton.config(text='Play')
         self.stopButton.config(state=DISABLED)
-        self.showText('Stopped...')        
 
     def toGaveOver(self):
         self.curstate=Display.State.GAMEOVER
@@ -105,7 +113,6 @@ class Display(Frame):
 
         self.bind('<Key>', self.key)             
         self.bind('<Button-1>', self.callback)
-        self.showText('Ready...')
         
     def showText(self, text_new):
         print(text_new)
@@ -142,7 +149,7 @@ class Display(Frame):
         
     def crashed(self):
         self.snake.soundNegative()        
-        self.showText('Do not leave out of this world')
+        self.showText('Oops!')
         self.stop()
             
     def refresh(self):
@@ -154,4 +161,5 @@ class Display(Frame):
             self.snake.moveAndShow(self, tile)
             self.world.createFeed(self)
         elif tile.type == 'space':
-            self.snake.moveAndShow(self, tile)
+            if self.snake.moveAndShow(self, tile) == False:
+                self.crashed()
