@@ -6,41 +6,27 @@ Created on 2017. 2. 12.
 
 from tkinter import * 
 from enum import Enum
-from snake import *
+from snakerun import snake
 
 class Display(Frame):  
+    WIDTH, HEIGHT=50,50   # constants
+    GRAIN_SIZE=10            # constants
+        
     class State(Enum):
         INIT=0
         PLAYING=1
         STOPPED=2
         GAMEOVER=3
                       
-    def __init__(self, world=None, snake=None, sleep_time=1000):
-        if world != None and snake != None:
-            self.snake = snake
-            self.world = world
-            self.map_grain_size = world.grain_size
-            self.map_width = world.width
-            self.map_height = world.height
-            self.map_bg = world.bg
-            self.sleep_time = sleep_time
-            
-            root = Tk()
-            root.resizable(0,0)   
-            Frame.__init__(self, root)   
-            self.config(bg='black')    
-            self.grid()                   
-            self.createWidgets()    
-            self.curstate=Display.State.INIT
-            self.snake.moveandshow(self)
-            self.world.createFeed(self)
-            self.job_id = None
-            self.focus_set()
-            
-        else:
-            quit()                
+    def __init__(self, master=None):
+        root = Tk()
+        root.resizable(0,0)   
+        Frame.__init__(self, master)   
+        self.grid()                       
+        self.createWidgets()    
+        self.curstate=Display.State.INIT
                  
-    def play(self):
+    def Play(self):
         if self.curstate != Display.State.PLAYING:
             self.toPlay()
     
@@ -49,20 +35,18 @@ class Display(Frame):
         self.playButton.config(state=DISABLED) 
         self.stopButton.config(state=NORMAL)
         self.showText('Playing...')
-        self.tick()
+        self.draw()          
     
     def stop(self):
-        if self.curstate != Display.State.STOPPED:
+        if self.curstate == Display.State.PLAYING:
             self.toStop()
 
     def toStop(self):
-        self.after_cancel(self.job_id)        
-        
         self.curstate=Display.State.STOPPED
         self.playButton.config(state=NORMAL)
         self.playButton.config(text='Play')
         self.stopButton.config(state=DISABLED)
-        self.showText('Stopped...')        
+        self.showText('Stopped...')
 
     def toGaveOver(self):
         self.curstate=Display.State.GAMEOVER
@@ -72,17 +56,18 @@ class Display(Frame):
         self.showText('Game over...') 
             
     def quit(self):
-        self.showText('Good bye~')
+        print('Good bye~')
         quit()
         
     def createWidgets(self):
-        self.mainCanvas = Canvas(self, bg=self.map_bg,
-            width=(self.map_width*self.map_grain_size), 
-            height=(self.map_height*self.map_grain_size))            
+        self.headLabel = Label(self)
+        self.mainCanvas = Canvas(self, bg='blue',
+            width=(Display.WIDTH*Display.GRAIN_SIZE), 
+            height=(Display.HEIGHT*Display.GRAIN_SIZE))            
         self.logo = PhotoImage(file='kaist_logo.gif')
         self.logoLabel = Label(self, image=self.logo)  
         self.playButton = Button(self, text='Play',
-            command=self.play)            
+            command=self.Play)            
         self.stopButton = Button(self, text='Stop',
             command=self.stop, state=DISABLED)            
         self.quitButton = Button(self, text='Quit',
@@ -92,60 +77,31 @@ class Display(Frame):
                          bg='green', fg='white')
         self.scrollbar.config(command=self.text.yview)
         
-        self.mainCanvas.grid(row=0, column=0, rowspan=20, columnspan=20, sticky=N+W+S+E)
-        self.logoLabel.grid(row=0, column=20, columnspan=1, sticky=N+W+S+E)         
-        self.playButton.grid(row=1, column=20, columnspan=1, sticky=N+W+S+E)      
-        self.stopButton.grid(row=2, column=20, columnspan=1, sticky=N+W+S+E)    
-        self.quitButton.grid(row=3, column=20, columnspan=1, sticky=N+W+S+E)
+        self.headLabel.grid(row=0, column=0, rowspan=1, columnspan=23, sticky=N+W+S+E)
+        self.mainCanvas.grid(row=1, column=0, rowspan=20, columnspan=20, sticky=N+W+S+E)
+        self.logoLabel.grid(row=1, column=20, columnspan=1, rowspan=3, sticky=N+W+S+E)         
+        self.playButton.grid(row=1, column=21, columnspan=3, sticky=N+W+S+E)      
+        self.stopButton.grid(row=2, column=21, columnspan=3,sticky=N+W+S+E)    
+        self.quitButton.grid(row=3, column=21, columnspan=3,sticky=N+W+S+E)
+        self.text.grid(row=4, column=20, rowspan=23, columnspan=3, sticky=N+W+S+E)
+        self.scrollbar.grid(row=4, column=24, rowspan=23, columnspan=1, sticky=N+W+S+E)
+        
+        self.rect_list = list()
+        self.rect_pos = list()
+        self.rect_id = self.mainCanvas.create_rectangle(0, 0, Display.GRAIN_SIZE, Display.GRAIN_SIZE, fill='yellow')
+        
+        class Pos:
+            def __init__(self, x, y):
+                self.x = x
+                self.y = y
 
-        self.bind('<Key>', self.key)             
-        self.bind('<Button-1>', self.callback)
+        self.rect_list.append(self.rect_id)   
+        self.rect_pos.append( Pos(0,0) )      
+
         self.showText('Ready...')
         
     def showText(self, text_new):
-        print(text_new)
+        self.text.insert(END, text_new)
         
-    def callback(self, event):
-        self.focus_set()
-        
-    def toggle(self):
-        switch_code = {Display.State.PLAYING:self.stop, Display.State.STOPPED:self.play}
-        func = switch_code.get(self.curstate, None)
-        if func != None:
-            func()                
-    
-    def key(self, event):  
-        if event.keycode == 32:
-            self.toggle()
-            return                                
-        elif event.keycode == 37: # left key
-            switchcode = {'up':'left', 'left':'down', 'down':'right', 'right':'up'}
-        elif event.keycode == 39: # right key
-            switchcode = {'up':'right', 'left':'up', 'down':'left', 'right':'down'}
-        else: 
-            return
-        self.snake.head.dir = switchcode.get(self.snake.head.dir)
-        self.play()
-        
-    def tick(self):
-        if self.curstate == Display.State.PLAYING:   
-            self.refresh()
-            if self.job_id != None: self.after_cancel(self.job_id) 
-            self.job_id = self.after(self.sleep_time, self.tick)
-        else:
-            if self.job_id != None: self.after_cancel(self.job_id) 
-        
-    def crashed(self):
-        self.snake.soundNegative()        
-        self.showText('Your snake has run into the wall')
-        self.stop()
-            
-    def refresh(self):
-        tile = self.world.getNextTile(self.snake)
-        if tile == 'wall' or tile == 'snake':
-            self.crashed()
-        elif tile == 'feed':
-            self.snake.moveandshow(self, self.world.feed)
-            self.world.removeFeed(self)
-        elif tile == 'space':
-            self.snake.moveandshow(self)
+    def draw(self):
+        self.mainCanvas.move(self.rect_list[0], Display.GRAIN_SIZE, 0)           
