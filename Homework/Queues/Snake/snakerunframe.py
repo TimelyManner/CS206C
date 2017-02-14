@@ -14,11 +14,6 @@ class Display(Frame):
         PLAYING=1
         STOPPED=2
         GAMEOVER=3
-        
-    class Tile:
-        def __init__(self, type, shape_id=None):
-            self.type = type
-            self.shape_id = shape_id
                       
     def __init__(self, world=None, snake=None, sleep_time=1000):
         if world != None and snake != None:
@@ -37,8 +32,8 @@ class Display(Frame):
             self.grid()                   
             self.createWidgets()    
             self.curstate=Display.State.INIT
+            self.snake.moveandshow(self)
             self.world.createFeed(self)
-            self.snake.moveAndShow(self, Display.Tile('space'))            
             self.job_id = None
             self.focus_set()
             
@@ -142,16 +137,15 @@ class Display(Frame):
         
     def crashed(self):
         self.snake.soundNegative()        
-        self.showText('Do not leave out of this world')
+        self.showText('Your snake has run into the wall')
         self.stop()
             
     def refresh(self):
-        tile = self.world.getForwardTile(self.snake)
-        if tile.type == 'wall' or tile.type == 'snake':
+        tile = self.world.getNextTile(self.snake)
+        if tile == 'wall' or tile == 'snake':
             self.crashed()
-        elif tile.type == 'feed':
-            self.snake.soundPositive()
-            self.snake.moveAndShow(self, tile)
-            self.world.createFeed(self)
-        elif tile.type == 'space':
-            self.snake.moveAndShow(self, tile)
+        elif tile == 'feed':
+            self.snake.moveandshow(self, self.world.feed)
+            self.world.removeFeed(self)
+        elif tile == 'space':
+            self.snake.moveandshow(self)
