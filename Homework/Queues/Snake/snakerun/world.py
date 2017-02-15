@@ -5,17 +5,20 @@ Created on 2017. 2. 12.
 '''
 from tkinter import *
 import random
-from snakerunframe import *
+from snakerun.snakerunframe import *
 
 class World:
     class Map:  
         SPACE = '0'        
-        WALL = '1'              
+        WALL =  '1' 
+        FEED =  '2'
+        OBJECT = '3'
+                     
         def __init__(self, width, height, size, bg):
             self.width = width
             self.height= height
             self.grain_size = size
-            self.tiles = None
+            self.tiles = list()
             self.bg = bg            
     
     class Feed:
@@ -23,7 +26,8 @@ class World:
             self.x = x
             self.y = y
             self.color = color
-            self.shape_id = None             
+            self.shape_id = None
+            self.backup = World.Map.SPACE             
     
     def __init__(self, file):
         self.map = World.Map(0, 0, None, None)
@@ -81,6 +85,13 @@ class MyWorld(World):
     def __init__(self, file):
         World.__init__(self, file)
         
+    def putThingToMap(self, x, y, obj):
+       self.map.tiles[y][x] = obj
+#       print('{} at map({},{})'.format(obj, x, y))
+        
+    def getThingFromMap(self, x, y):
+        return self.map.tiles[y][x]          
+        
     def createFeed(self, display):
         self.feed.color = random.choice(['red', 'blue', 'black', 'yellow'])
         
@@ -88,12 +99,17 @@ class MyWorld(World):
         while feed_ok == False:
             self.feed.x = int(random.random()*(self.map.width-1))
             self.feed.y = int(random.random()*(self.map.height-1))
-            if self.map.tiles[self.feed.y][self.feed.x] == World.Map.SPACE:
+            if self.getThingFromMap(self.feed.x, self.feed.y) == str(World.Map.SPACE):
                 feed_ok = True   
                      
         self.feed.shape_id = display.mainCanvas.create_rectangle(self.feed.x*self.map.grain_size, self.feed.y*self.map.grain_size, 
                                             (self.feed.x+1)*self.map.grain_size, (self.feed.y+1)*self.map.grain_size, 
                                             fill=self.feed.color)
+        self.putThingToMap(self.feed.x, self.feed.y, World.Map.FEED)
+
+    def removeFeed(self, display, tile):
+        display.mainCanvas.delete(tile.shape_id)
+        self.putThingToMap(tile.x, tile.y, World.Map.SPACE)
         
     def loadMap(self, file_name):
         file_object = open(file_name, 'r')
@@ -110,7 +126,7 @@ class MyWorld(World):
         row_len = 0   
         for l in l_map:
             row_len = row_len + 1
-            self.map.tiles.append(l)
+            self.map.tiles.append(list(l))
         file_object.close()
         if self.map.width != column_len or self.map.height != row_len: 
             print('Map errors: width {} or height {} is wrong!'.format(column_len, row_len))
@@ -129,9 +145,11 @@ class MyWorld(World):
             x = snake.head.x
             y = snake.head.y + 1
         
-        if self.map.tiles[y][x] == World.Map.WALL:
-            return Display.Tile('wall', None)  
-        elif x == self.feed.x and y == self.feed.y:
-            return Display.Tile('feed', self.feed.shape_id)
+        if self.getThingFromMap(x, y) == World.Map.WALL:
+            return Display.Tile('wall', None, x, y)  
+        elif self.getThingFromMap(x, y) == World.Map.FEED:
+            return Display.Tile('feed', self.feed.shape_id, x, y)
+        elif self.getThingFromMap(x, y) == World.Map.OBJECT:
+            return Display.Tile('tail', None, x, y)
         else:
-            return Display.Tile('space', None)  
+            return Display.Tile('space', None, x, y)  

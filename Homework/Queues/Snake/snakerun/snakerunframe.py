@@ -15,9 +15,11 @@ class Display(Frame):
         GAMEOVER=3
         
     class Tile:
-        def __init__(self, type, shape_id=None):
+        def __init__(self, type, shape_id=None, x=-1, y=-1):
             self.type = type
             self.shape_id = shape_id
+            self.x = x
+            self.y = y
                       
     def __init__(self, world=None, snake=None, sleep_time=1000):
         if world != None and snake != None:
@@ -51,6 +53,7 @@ class Display(Frame):
                                
                 
             self.focus_set()
+            self.key_processing = False
             
         else:
             quit()                
@@ -127,6 +130,8 @@ class Display(Frame):
             func()                
     
     def key(self, event):  
+        if self.key_processing == True: return
+             
         if event.keycode == 32:
             self.toggle()
             return                                
@@ -136,6 +141,8 @@ class Display(Frame):
             switchcode = {'up':'right', 'left':'up', 'down':'left', 'right':'down'}
         else: 
             return
+        self.key_processing = True
+        
         self.snake.head.dir = switchcode.get(self.snake.head.dir)
         self.play()
         
@@ -147,19 +154,21 @@ class Display(Frame):
         else:
             if self.job_id != None: self.after_cancel(self.job_id) 
         
-    def crashed(self):
+    def crashed(self, msg):
         self.snake.soundNegative()        
-        self.showText('Oops!')
+        self.showText(msg)
         self.stop()
             
     def refresh(self):
-        tile = self.world.getForwardTile(self.snake)
-        if tile.type == 'wall' or tile.type == 'snake':
-            self.crashed()
+        tile = self.world.getForwardTile(self.snake)        
+        if tile.type == 'wall' or tile.type == 'tail':
+            self.crashed('Oops! you met ' + tile.type)
         elif tile.type == 'feed':
             self.snake.soundPositive()
             self.snake.moveAndShow(self, tile)
-            self.world.createFeed(self)
+            self.world.removeFeed(self, tile)
+            self.world.createFeed(self)           
         elif tile.type == 'space':
             if self.snake.moveAndShow(self, tile) == False:
                 self.crashed()
+        self.key_processing = False
