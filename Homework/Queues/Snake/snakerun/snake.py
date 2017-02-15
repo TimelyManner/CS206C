@@ -84,7 +84,6 @@ class MySnake(Snake):
                     pre_color = fill=display.mainCanvas.itemcget( self.tail_queue[i-1].shape_id, 'fill')
                     display.mainCanvas.itemconfig(self.tail_queue[i].shape_id,
                                                   fill=pre_color)
-            
             new_head_shape_id = display.mainCanvas.create_rectangle(x1, y1, x2, y2, fill=self.head.color)   
              
             if tile.type == 'space':                          

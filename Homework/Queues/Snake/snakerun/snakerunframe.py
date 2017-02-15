@@ -161,14 +161,14 @@ class Display(Frame):
             
     def refresh(self):
         tile = self.world.getForwardTile(self.snake)        
-        if tile.type == 'wall' or tile.type == 'tail':
-            self.crashed('Oops! you met ' + tile.type)
+        if tile.type == 'wall' or tile.type == 'tail' or tile.type == 'out':
+            self.crashed('Oops! you met {}' + tile.type)
         elif tile.type == 'feed':
             self.snake.soundPositive()
             self.snake.moveAndShow(self, tile)
             self.world.removeFeed(self, tile)
             self.world.createFeed(self)           
         elif tile.type == 'space':
-            if self.snake.moveAndShow(self, tile) == False:
-                self.crashed()
+            self.snake.moveAndShow(self, tile)
+        
         self.key_processing = False

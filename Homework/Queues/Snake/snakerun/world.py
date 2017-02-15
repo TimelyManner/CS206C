@@ -32,13 +32,6 @@ class World:
     def __init__(self, file):
         self.map = World.Map(0, 0, None, None)
         self.loadMap(file)
-        '''      
-        self.grain_size = 15
-        self.width = 50
-        self.height = 50
-       
-        self.bg = 'green' 
-        ''' 
         self.feed = World.Feed(-100, -100, 'red')
         
     def loadMap(self, file_name):
@@ -56,9 +49,9 @@ class World:
         self.feed.shape_id = display.mainCanvas.create_rectangle(self.feed.x*self.map.grain_size, self.feed.y*self.map.grain_size, 
                                             (self.feed.x+1)*self.map.grain_size, (self.feed.y+1)*self.map.grain_size, 
                                             fill=self.feed.color)        
-    def removeFeed(self, display):
+    def removeFeed(self, display, tile = None):
         display.mainCanvas.delete(self.feed.shape_id)
-        self.feed = None
+        self.feed = World.Feed(-100, -100, 'red')
     
     def getForwardTile(self, snake):
         if snake.head.dir == 'right':
@@ -76,8 +69,6 @@ class World:
         
         if x == self.feed.x and y == self.feed.y:
             return Display.Tile('feed', self.feed.shape_id)
-        elif x < 0 or y < 0 or x >= self.map.width or y >= self.map.height:
-            return Display.Tile('wall', None)        
         else:
             return Display.Tile('space', None)
         
@@ -87,7 +78,6 @@ class MyWorld(World):
         
     def putThingToMap(self, x, y, obj):
        self.map.tiles[y][x] = obj
-#       print('{} at map({},{})'.format(obj, x, y))
         
     def getThingFromMap(self, x, y):
         return self.map.tiles[y][x]          
@@ -145,7 +135,9 @@ class MyWorld(World):
             x = snake.head.x
             y = snake.head.y + 1
         
-        if self.getThingFromMap(x, y) == World.Map.WALL:
+        if x < 0 or y < 0 or x >= self.map.width or y >= self.map.height:
+            return Display.Tile('out', None)        
+        elif self.getThingFromMap(x, y) == World.Map.WALL:
             return Display.Tile('wall', None, x, y)  
         elif self.getThingFromMap(x, y) == World.Map.FEED:
             return Display.Tile('feed', self.feed.shape_id, x, y)
