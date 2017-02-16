@@ -8,6 +8,9 @@ from snakerun.snakerunframe import *
 from snake import *
 from world import *
 import random
+from sys import platform as _platform
+
+print('your program is running under {} platform'.format(_platform) )
 
 random.seed()
 rand_dir = int(random.random()*3)

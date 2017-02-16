@@ -5,8 +5,20 @@ Created on 2017. 2. 12.
 '''
 from tkinter import *
 from collections import deque
-import winsound
 from snakerun.world import *
+from sys import platform as _platform
+import os
+import sys
+
+if _platform == "linux" or _platform == "linux2":
+    pass
+    # linux
+elif _platform == "darwin":
+    pass
+    # MAC OS X
+elif _platform == "win32":
+    # Windows
+    import winsound
 
 class Snake:
     class Head:    
@@ -33,10 +45,18 @@ class Snake:
         self.head.y += 1
         
     def soundPositive(self):
-        winsound.Beep(2500, 100)
+        if _platform == 'win32':
+            winsound.Beep(2500, 100)
+        else:
+            sys.stdout.write('\a')
+            sys.stdout.flush()
         
     def soundNegative(self):
-        winsound.Beep(1000, 200)
+        if _platform == 'win32':
+            winsound.Beep(1000, 200)
+        else:
+            sys.stdout.write('\a')
+            sys.stdout.flush()
         
     def moveAndShow(self, display, tile=None):
         switcher = {'right':self._right, 'left':self._left, 'up':self._up, 'down':self._down}

@@ -4,10 +4,22 @@ Created on 2017. 2. 12.
 @author: jslee
 '''
 from tkinter import * 
-from enum import Enum
+from enum import *
 from snakerun.world import *
-
-class Display(Frame):  
+from sys import platform as _platform
+   
+class Display(Frame): 
+    if _platform == 'win32':
+        KEY_LEFT=37
+        KEY_RIGHT=39
+        KEY_SPACE=32
+    elif _platform == 'darwin':
+        KEY_LEFT=8124162
+        KEY_RIGHT=8189699
+        KEY_SPACE=3211296
+    else:
+        pass     
+     
     class State(Enum):
         INIT=0
         PLAYING=1
@@ -22,6 +34,8 @@ class Display(Frame):
             self.y = y
                       
     def __init__(self, world=None, snake=None, sleep_time=1000):
+       
+        
         if world != None and snake != None:
             self.snake = snake
             self.world = world
@@ -131,13 +145,12 @@ class Display(Frame):
     
     def key(self, event):  
         if self.key_processing == True: return
-             
-        if event.keycode == 32:
+        if event.keycode == self.KEY_SPACE:
             self.toggle()
             return                                
-        elif event.keycode == 37: # left key
+        elif event.keycode == self.KEY_LEFT:
             switchcode = {'up':'left', 'left':'down', 'down':'right', 'right':'up'}
-        elif event.keycode == 39: # right key
+        elif event.keycode == self.KEY_RIGHT:
             switchcode = {'up':'right', 'left':'up', 'down':'left', 'right':'down'}
         else: 
             return
