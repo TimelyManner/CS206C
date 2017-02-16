@@ -17,8 +17,8 @@ class Snake:
             self.dir = dir    
         
     def __init__(self, x=0, y=0, color='yellow', dir='right'):
-        self.head = self.Head( x, y, color, dir)
-        self.tail_queue = deque([])
+        self.head = self.Head( x, y, color, dir)        
+        self.new_head_shape_id = None
     
     def _right(self, grain_size):
         self.head.x += 1
@@ -44,17 +44,10 @@ class Snake:
         func(display.map_grain_size)   
         
         x1,x2=self.head.x*display.map_grain_size, (self.head.x+1)*display.map_grain_size
-        y1,y2=self.head.y*display.map_grain_size, (self.head.y+1)*display.map_grain_size
-        new_head_shape_id = display.mainCanvas.create_rectangle(x1, y1, x2, y2, fill=self.head.color)             
-        
-        if self.tail_queue.__len__() > 0:
-            tail_shape_id = self.tail_queue.popleft()            
-            display.mainCanvas.delete(tail_shape_id)
-            
-        self.tail_queue.append(new_head_shape_id)
-        
-        if tile != None and tile.type == 'feed':
-            display.mainCanvas.delete(tile.shape_id) 
+        y1,y2=self.head.y*display.map_grain_size, (self.head.y+1)*display.map_grain_size 
+        if self.new_head_shape_id != None:       
+            display.mainCanvas.delete( self.new_head_shape_id)         
+        self.new_head_shape_id = display.mainCanvas.create_rectangle(x1, y1, x2, y2, fill=self.head.color)             
         
 class MySnake(Snake):
     
@@ -66,6 +59,7 @@ class MySnake(Snake):
     
     def __init__(self, x, y, color, dir):
         Snake.__init__(self, x, y, color, dir)
+        self.tail_queue = deque([])
         
     def moveAndShow(self, display, tile=None):
         if tile != None:
