@@ -16,7 +16,3 @@ class MyDequeue(deque):
         '''
         Constructor
         '''
-        
-    
-    
-        

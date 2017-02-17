@@ -8,7 +8,6 @@ from app_queue.snakerun.world import *
 from app_queue.mysnakerun.dequeue import *
 
 class MySnake(Snake):
-    
     class Tail:
         def __init__(self, shape_id, x, y):
             self.shape_id = shape_id
@@ -31,7 +30,7 @@ class MySnake(Snake):
             x1,x2=self.head.x*display.map_grain_size, (self.head.x+1)*display.map_grain_size
             y1,y2=self.head.y*display.map_grain_size, (self.head.y+1)*display.map_grain_size
             
-            if self.tail_queue.__len__() >= 2:   # if any tail exists without the head
+            if len(self.tail_queue) >= 2:   # if any tail exists without the head
                 for i in range(len(self.tail_queue)-1, 0, -1):                        
                     pre_color = fill=display.mainCanvas.itemcget( self.tail_queue[i-1].shape_id, 'fill')
                     display.mainCanvas.itemconfig(self.tail_queue[i].shape_id,

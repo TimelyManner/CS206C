@@ -18,11 +18,13 @@ def goToProjectRootDirectory():
 
 print('The reference program is running under \'{}\' platform'.format(_platform) )
 goToProjectRootDirectory()
-
 random.seed()
 rand_dir = int(random.random()*3)
 switch_code = {0:'right', 1:'up', 2:'left', 3:'right'}
 
+'''
+You can change the following codes for the homework
+'''
 playground = MyWorld('map2.txt')
 mysnake = MySnake(int(playground.map.width/2), int(playground.map.height/2), 
                   'white', switch_code.get(rand_dir))
