@@ -34,8 +34,7 @@ class Display(Frame):
             self.x = x
             self.y = y
                       
-    def __init__(self, world=None, snake=None, sleep_time=1000):
-
+    def __init__(self, world=None, snake=None):
         if world != None and snake != None:
             self.snake = snake
             self.world = world
@@ -43,7 +42,7 @@ class Display(Frame):
             self.map_width = world.map.width
             self.map_height = world.map.height
             self.map_bg = world.map.bg
-            self.sleep_time = sleep_time
+            self.sleep_time = world.sleep_time
             
             root = Tk()
             root.resizable(0,0)   
@@ -53,19 +52,18 @@ class Display(Frame):
             self.createWidgets()    
             self.curstate=Display.State.INIT
             self.world.createFeed(self)
-            self.snake.moveAndShow(self, Display.Tile('space'))            
+            self.snake.moveAndShow(self, Display.Tile('space'))         
             self.job_id = None
-            row_cnt = 0
-            for row in world.map.tiles:
-                for i in range(0, len(row)):
-                    if row[i] == world.Map.WALL:
-                        self.mainCanvas.create_rectangle(i*world.map.grain_size,
-                                                         row_cnt*world.map.grain_size, 
-                                                         (i+1)*world.map.grain_size, 
-                                                         (row_cnt+1)*world.map.grain_size, fill = world.map.wall_color)
-                row_cnt = row_cnt +1
-                               
-                
+
+            for d in world.map.tiles:
+                if world.map.tiles[d].type == world.Map.WALL:
+                    x = world.map.tiles[d].x
+                    y = world.map.tiles[d].y
+                    world.map.tiles[d].shape_id = self.mainCanvas.create_rectangle(x*world.map.grain_size,
+                                                     y*world.map.grain_size, 
+                                                     (x+1)*world.map.grain_size, 
+                                                     (y+1)*world.map.grain_size, fill = world.map.wall_color)
+                    
             self.focus_set()
             self.key_processing = False
             

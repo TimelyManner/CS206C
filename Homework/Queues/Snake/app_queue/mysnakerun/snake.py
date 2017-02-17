@@ -42,7 +42,7 @@ class MySnake(Snake):
                     tail = self.tail_queue.popleft()            
                     display.mainCanvas.delete(tail.shape_id)
                 if len(self.tail_queue) >= 1:                                        
-                    display.world.putThingToMap(tail.x, tail.y, World.Map.SPACE)                    
+                    display.world.putTileToMap(tail.x, tail.y, World.Map.SPACE)                    
 
             elif tile.type == 'feed':                
                 tail = self.tail_queue[0]
@@ -51,5 +51,5 @@ class MySnake(Snake):
                          
             self.tail_queue.append(MySnake.Tail(new_head_shape_id,self. head.x, self.head.y))
             if len(self.tail_queue) >= 2:                
-                display.world.putThingToMap(pre_head_x, pre_head_y, World.Map.OBJECT)
+                display.world.putTileToMap(pre_head_x, pre_head_y, World.Map.OBJECT)
             return True    

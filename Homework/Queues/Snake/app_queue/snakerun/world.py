@@ -19,7 +19,6 @@ class World:
             self.width = width
             self.height= height
             self.grain_size = size
-            self.tiles = list()
             self.bg = bg            
     
     class Feed:
@@ -32,6 +31,7 @@ class World:
     
     def __init__(self, file=None):
         self.map = World.Map(0, 0, None, None)
+        self.sleep_time = 200
         self.loadMap(file)
         self.feed = World.Feed(-100, -100, 'red')
         
