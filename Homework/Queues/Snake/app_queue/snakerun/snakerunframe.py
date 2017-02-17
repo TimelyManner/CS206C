@@ -5,8 +5,9 @@ Created on 2017. 2. 12.
 '''
 from tkinter import * 
 from enum import *
-from snakerun.world import *
 from sys import platform as _platform
+
+from app_queue.snakerun.world import *
    
 class Display(Frame): 
     if _platform == 'win32':
@@ -34,8 +35,7 @@ class Display(Frame):
             self.y = y
                       
     def __init__(self, world=None, snake=None, sleep_time=1000):
-       
-        
+
         if world != None and snake != None:
             self.snake = snake
             self.world = world
@@ -108,7 +108,7 @@ class Display(Frame):
     def createWidgets(self):
         self.mainCanvas = Canvas(self, bg=self.map_bg,
             width=(self.map_width*self.map_grain_size), 
-            height=(self.map_height*self.map_grain_size))            
+            height=(self.map_height*self.map_grain_size))           
         self.logo = PhotoImage(file='kaist_logo.gif')
         self.logoLabel = Label(self, image=self.logo)  
         self.playButton = Button(self, text='Play',
