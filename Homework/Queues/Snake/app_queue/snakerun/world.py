@@ -5,11 +5,14 @@ Created on 2017. 2. 12.
 '''
 from tkinter import *
 import random
-
-from app_queue.snakerun.snakerunframe import *   
+from app_queue.snakerun.snakerunframe import *
 
 class World:
-    class Map:  
+    class Map:
+        def __init__(self):
+            pass
+            
+    class Cell:  
         SPACE = '0'        
         WALL =  '1' 
         FEED =  '2'
@@ -27,10 +30,10 @@ class World:
             self.y = y
             self.color = color
             self.shape_id = None
-            self.backup = World.Map.SPACE             
+            self.backup = World.Cell.SPACE             
     
     def __init__(self, file=None):
-        self.map = World.Map(0, 0, None, None)
+        self.map = World.Map()
         self.sleep_time = 200
         self.loadMap(file)
         self.feed = World.Feed(-100, -100, 'red')

@@ -5,7 +5,7 @@ Created on 2017. 2. 17.
 '''
 from app_queue.snakerun.snake import *
 from app_queue.snakerun.world import *
-from app_queue.mysnakerun.dequeue import *
+from app_queue.mysnakerun.queue import *
 
 class MySnake(Snake):
     class Tail:
@@ -16,9 +16,13 @@ class MySnake(Snake):
     
     def __init__(self, x, y, color, dir):
         Snake.__init__(self, x, y, color, dir)
-        self.tail_queue = MyDequeue([])
+        self.tail_queue = MyQueue()
         
     def moveAndShow(self, display, tile=None):
+        '''
+        display: main window (app_queue.snakerunframe.Display)
+        tile: tile info to get next (app_queue.snakerunframe.Display.Tile)
+        '''
         if tile != None:
             pre_head_x = self.head.x
             pre_head_y = self.head.y
@@ -42,7 +46,7 @@ class MySnake(Snake):
                     tail = self.tail_queue.popleft()            
                     display.mainCanvas.delete(tail.shape_id)
                 if len(self.tail_queue) >= 1:                                        
-                    display.world.putTileToMap(tail.x, tail.y, World.Map.SPACE)                    
+                    display.world.putTileToMap(tail.x, tail.y, World.Cell.SPACE)                    
 
             elif tile.type == 'feed':                
                 tail = self.tail_queue[0]
@@ -51,5 +55,5 @@ class MySnake(Snake):
                          
             self.tail_queue.append(MySnake.Tail(new_head_shape_id,self. head.x, self.head.y))
             if len(self.tail_queue) >= 2:                
-                display.world.putTileToMap(pre_head_x, pre_head_y, World.Map.OBJECT)
+                display.world.putTileToMap(pre_head_x, pre_head_y, World.Cell.OBJECT)
             return True    

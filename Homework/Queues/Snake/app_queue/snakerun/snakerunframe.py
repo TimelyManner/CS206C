@@ -6,7 +6,6 @@ Created on 2017. 2. 12.
 from tkinter import * 
 from enum import *
 from sys import platform as _platform
-
 from app_queue.snakerun.world import *
    
 class Display(Frame): 
@@ -56,7 +55,7 @@ class Display(Frame):
             self.job_id = None
 
             for d in world.map.tiles:
-                if world.map.tiles[d].type == world.Map.WALL:
+                if world.map.tiles[d].type == world.Cell.WALL:
                     x = world.map.tiles[d].x
                     y = world.map.tiles[d].y
                     world.map.tiles[d].shape_id = self.mainCanvas.create_rectangle(x*world.map.grain_size,
