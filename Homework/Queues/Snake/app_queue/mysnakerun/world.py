@@ -5,7 +5,6 @@ Created on 2017. 2. 17.
 '''
 from app_queue.snakerun.snakerunframe import *
 from app_queue.snakerun.world import *
-from posix import getcwd
 from builtins import type
 
 class MyWorld(World):
