@@ -4,8 +4,8 @@ Created on 2017. 2. 17.
 @author: jslee
 '''
 from app_queue.snakerun.snake import *
-from app_queue.snakerun.world import *
-from app_queue.mysnakerun.queue import *
+from world import *
+from queues import *
 
 class MySnake(Snake):
     class Tail:
@@ -16,7 +16,7 @@ class MySnake(Snake):
     
     def __init__(self, x, y, color, dir):
         Snake.__init__(self, x, y, color, dir)
-        self.tail_queue = MyQueue()
+        self.tail_queue = MyQueue()        
         
     def moveAndShow(self, display, tile=None):
         '''

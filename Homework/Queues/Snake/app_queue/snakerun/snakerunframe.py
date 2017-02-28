@@ -6,7 +6,7 @@ Created on 2017. 2. 12.
 from tkinter import * 
 from enum import *
 from sys import platform as _platform
-from app_queue.snakerun.world import *
+from world import *
    
 class Display(Frame): 
     if _platform == 'win32':

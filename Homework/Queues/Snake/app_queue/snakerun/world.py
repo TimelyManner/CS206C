@@ -5,7 +5,7 @@ Created on 2017. 2. 12.
 '''
 from tkinter import *
 import random
-from app_queue.snakerun.snakerunframe import *
+from snakerunframe import *
 
 class World:
     class Map:

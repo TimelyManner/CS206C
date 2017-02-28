@@ -3,12 +3,10 @@ Created on 2017. 2. 12.
 
 @author: jslee
 '''
-from sys import platform as _platform
-import os
-import sys
-from tkinter import *
 
-from app_queue.snakerun import world
+import os, sys
+from tkinter import *
+from sys import platform as _platform
 
 if _platform == "linux" or _platform == "linux2":
     pass
