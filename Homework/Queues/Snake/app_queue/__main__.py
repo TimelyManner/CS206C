@@ -18,10 +18,13 @@ if sys.argv[0] != '__main__':   # When run by shell prompt
     import __init__
 
 id = 'base version'
+playground = None
+mysnake = None
+
+from snakerun.snake import *
+from snakerun.snakerunframe import *
+
 if len(sys.argv) <= 1:  # When run with no additional arguments
-    from snakerun.snake import *
-    from snakerun.snakerunframe import *
-     
     playground = World('map2.txt')
     mysnake = Snake(int(playground.map.width/2), int(playground.map.height/2), 
                       'white', switch_code.get(rand_dir))
@@ -34,6 +37,9 @@ else:
     mysnake = MySnake(int(playground.map.width/2), int(playground.map.height/2), 
                       'white', switch_code.get(rand_dir))
 
-app = Display(playground, mysnake)
-app.master.title('Snake Run with queues: ' + id)
-app.mainloop()
+if playground == None or mysnake == None:
+    print('Error: run after implementing your snake!')
+else:
+    app = Display(playground, mysnake)
+    app.master.title('Snake Run with queues: ' + id)
+    app.mainloop()
