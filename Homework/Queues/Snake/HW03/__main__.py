@@ -22,7 +22,7 @@ if len(sys.argv) < 2:       # When being run with no additional argument
 else:       
     id = sys.argv[1]    # file_name for map
     try:
-        playground = MyWorld(id)    # To create a world from map file named "map2.txt"
+        playground = MyWorld(id)    # To create a world from givne map file
         mysnake = MySnake(int(playground.map.width/2), 
                           int(playground.map.height/2), 'white')
     except FileNotFoundError:
