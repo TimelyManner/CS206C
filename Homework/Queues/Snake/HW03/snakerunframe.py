@@ -137,8 +137,8 @@ class Display(Frame):
         print(text_new)
         
     def _toggle(self):  # To make the frame state toggled between PLAY and STOPPED
-        switch_code = {Display.State.PLAYING:self.stop, Display.State.STOPPED:self.play}
-        func = switch_code.get(self.curstate, None)
+        switch_code = {Display.State.PLAYING:self._stop, Display.State.STOPPED:self._play}
+        func = switch_code.get(self.__cur_state, None)
         if func != None:
             func()                
     
